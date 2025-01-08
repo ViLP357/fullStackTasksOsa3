@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
 
+app.use(express.json())
 
 let persons = [
   {
@@ -40,12 +41,25 @@ app.get('/api/persons/:id', (request, response) => {
 
 app.delete("/api/persons/:id", (request, response) => {
   const id = request.params.id
-  persons = persons.filter(person => person.id === id)
+  persons = persons.filter(person => person.id !== id)
   response.status(204).end()
+})
+
+app.post("/api/persons", (request, response) => {
+  const person = request.body
+  if (!person.name) {
+    return response.status(400).json({
+      error: "name missing"
+    })
+  }
+  person.id = Math.floor(Math.random() * 100)
+  persons = persons.concat(person)
+
+  response.json(person)
 })
 
 const PORT = 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
-//3.4 puhelinluettelon backend step4
+//3.5 puhelinluettelon backend step5
