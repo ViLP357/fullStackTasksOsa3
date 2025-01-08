@@ -52,6 +52,17 @@ app.post("/api/persons", (request, response) => {
       error: "name missing"
     })
   }
+  if (!person.number) {
+    return response.status(400).json({
+      error: "number missing"
+    })
+  }
+
+  if (persons.some(personInList => personInList.name === person.name))  {
+    return response.status(400).json({
+      erro: 'name must be unique'
+    })
+  }
   person.id = Math.floor(Math.random() * 100)
   persons = persons.concat(person)
 
@@ -62,4 +73,4 @@ const PORT = 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
-//3.5 puhelinluettelon backend step5
+//3.6 puhelinluettelon backend step6
