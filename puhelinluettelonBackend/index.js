@@ -16,8 +16,12 @@ let persons = [
  ]
 
 
+// const d = new Date()
+
 app.get('/', (request, response) => {
-  response.send('<h1>Hello World!</h1>')
+  const d = new Date()
+  response.send(`<h2>Phonebook has info for ${persons.length} people</h2>
+    <p>${Date(d.setFullYear(d.getFullYear()).toString())}</p>`)
 })
 
 app.get('/api/persons', (request, response) => {
@@ -28,4 +32,4 @@ const PORT = 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
-//3.1 puhelinluettelon backend step1
+//3.2 puhelinluettelon backend step2
