@@ -1,13 +1,26 @@
 const express = require('express')
 var morgan = require("morgan")
-const app = express()
 
+const app = express()
 app.use(express.json())
 
-//morgan("tiny")
-app.use(morgan('tiny'));
 
+morgan.token("content",  (req) => {
+  //console.log(req.body)
+  return JSON.stringify(req.body)
 
+})
+//app.use(morgan('tiny'));
+//var qualified = false // ei toiminut
+
+app.use((req, res, next) => {
+  if (req.method === "POST" && qualified === true) {
+    morgan(":method :url :status :res[content-length] - :response-time ms :content")(req, res, next)
+    //qualified = false
+  } else {
+    morgan(":method :url :status :res[content-length] - :response-time ms")(req, res, next)
+  }
+});
 
 let persons = [
   {
@@ -64,7 +77,7 @@ app.post("/api/persons", (request, response) => {
 
   if (persons.some(personInList => personInList.name === person.name))  {
     return response.status(400).json({
-      erro: 'name must be unique'
+      error: 'name must be unique'
     })
   }
   person.id = Math.floor(Math.random() * 100).toString()
@@ -73,10 +86,13 @@ app.post("/api/persons", (request, response) => {
   response.json(person)
 })
 
-//morgan(':method :url :status :res[content-length] - :response-time ms')
+app.use((req, res, next) => {
+  console.log(req.body);
+  next();
+});
 
 const PORT = 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
-//3.6 puhelinluettelon backend step6
+//3.8 puhelinluettelon backend step8
