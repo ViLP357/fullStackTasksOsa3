@@ -1,7 +1,10 @@
 const express = require('express')
+const cors = require("cors")
 var morgan = require("morgan")
 
 const app = express()
+
+app.use(cors())
 app.use(express.json())
 
 
@@ -14,7 +17,7 @@ morgan.token("content",  (req) => {
 //var qualified = false // ei toiminut
 
 app.use((req, res, next) => {
-  if (req.method === "POST" && qualified === true) {
+  if (req.method === "POST") {
     morgan(":method :url :status :res[content-length] - :response-time ms :content")(req, res, next)
     //qualified = false
   } else {
