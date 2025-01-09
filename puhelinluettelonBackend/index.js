@@ -1,7 +1,13 @@
 const express = require('express')
+var morgan = require("morgan")
 const app = express()
 
 app.use(express.json())
+
+//morgan("tiny")
+app.use(morgan('tiny'));
+
+
 
 let persons = [
   {
@@ -16,11 +22,9 @@ let persons = [
   } 
  ]
 
-
-// const d = new Date()
-
 app.get('/', (request, response) => {
   const d = new Date()
+  
   response.send(`<h2>Phonebook has info for ${persons.length} people</h2>
     <p>${Date(d.setFullYear(d.getFullYear()).toString())}</p>`)
 })
@@ -63,11 +67,13 @@ app.post("/api/persons", (request, response) => {
       erro: 'name must be unique'
     })
   }
-  person.id = Math.floor(Math.random() * 100)
+  person.id = Math.floor(Math.random() * 100).toString()
   persons = persons.concat(person)
 
   response.json(person)
 })
+
+//morgan(':method :url :status :res[content-length] - :response-time ms')
 
 const PORT = 3001
 app.listen(PORT, () => {
