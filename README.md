@@ -1,1 +1,1 @@
-Linkki backendiin: https://fullstacktasksosa3.onrender.com/api/persons
+Linkki backendiin: https://fullstacktasksosa3.onrender.com
