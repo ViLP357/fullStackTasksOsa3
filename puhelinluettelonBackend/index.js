@@ -42,13 +42,10 @@ app.get('/api/persons', (request, response) => {
     } else {
       response.status(404).end()
     }
-   
   })
 })
 
 app.get('/api/persons/:id', (request, response) => {
-  //yksittäisen haku ei toimi
-
   const id = request.params.id
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -66,27 +63,19 @@ app.delete("/api/persons/:id", (request, response) => {
 })
 
 app.post("/api/persons", (request, response) => {
-  const person = request.body
-  if (!person.name) {
-    return response.status(400).json({
-      error: "name missing"
-    })
+  const body = request.body
+  
+  if (body.name === undefined) {
+    return response.status(400).json({ error: 'content mising'})
   }
-  if (!person.number) {
-    return response.status(400).json({
-      error: "number missing"
-    })
-  }
+  const person = new Person({
+    name: body.name,
+    number: body.number
+  })
 
-  if (persons.some(personInList => personInList.name === person.name))  {
-    return response.status(400).json({
-      error: 'name must be unique'
-    })
-  }
-  person.id = Math.floor(Math.random() * 100).toString()
-  persons = persons.concat(person)
-
-  response.json(person)
+  person.save().then(savedPerson => {
+    response.json(savedPerson)
+  })
 })
 
 app.use((req, res, next) => {
