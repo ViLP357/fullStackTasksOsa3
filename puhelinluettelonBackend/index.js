@@ -1,21 +1,19 @@
+require('dotenv').config()
 const express = require('express')
 const cors = require("cors")
 var morgan = require("morgan")
-
+const Person = require('./models/person')
 const app = express()
+
+const mongoose = require('mongoose')
 
 app.use(cors())
 app.use(express.json())
 app.use(express.static("dist"))
 
-
 morgan.token("content",  (req) => {
-  //console.log(req.body)
   return JSON.stringify(req.body)
-
 })
-//app.use(morgan('tiny'));
-//var qualified = false // ei toiminut
 
 app.use((req, res, next) => {
   if (req.method === "POST") {
@@ -24,22 +22,13 @@ app.use((req, res, next) => {
   } else {
     morgan(":method :url :status :res[content-length] - :response-time ms")(req, res, next)
   }
-});
-
-let persons = [
-  {
-   id: "1",
-   name: "Arto Hellas",
-   number: "040-123456"
-  },
-  {
-   id: "2",
-   name: "Ada Lovelace",
-   number: "39-44-5323523"
-  } 
- ]
+})
 
 app.get('/', (request, response) => {
+  response.send('<p>Phonebook</p>')
+})
+
+app.get('/info', (request, response) => {
   const d = new Date()
   
   response.send(`<h2>Phonebook has info for ${persons.length} people</h2>
@@ -47,17 +36,27 @@ app.get('/', (request, response) => {
 })
 
 app.get('/api/persons', (request, response) => {
-  response.json(persons)
+  Person.find({}).then(persons => {
+    if (persons){
+      response.json(persons)
+    } else {
+      response.status(404).end()
+    }
+   
+  })
 })
 
 app.get('/api/persons/:id', (request, response) => {
+  //yksittäisen haku ei toimi
+
   const id = request.params.id
-  const person = persons.find(person => person.id === id)
-  if (person) {
-  response.json(person)
-  } else {
-    response.status(404).end()
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return response.status(400).json({ error: 'Malformatted ID' });
   }
+  Person.findById(id).then(person => {
+    response.json(person)
+  })
 })
 
 app.delete("/api/persons/:id", (request, response) => {
@@ -93,8 +92,9 @@ app.post("/api/persons", (request, response) => {
 app.use((req, res, next) => {
   console.log(req.body);
   next();
-});
+})
 
+//const PORT = process.env.PORT
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)

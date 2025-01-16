@@ -18,6 +18,14 @@ const personSchema = new mongoose.Schema({
   number: String
 })
 
+personSchema.set('toJSON', {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString() // Muunna ObjectId merkkijonoksi
+    delete returnedObject._id // Poista alkuperäinen _id
+    delete returnedObject.__v // Poista __v, ei _v
+  }
+})
+
 const Person = mongoose.model('Person', personSchema)
 
 if (process.argv.length === 3) {
