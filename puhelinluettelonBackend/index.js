@@ -25,14 +25,22 @@ app.use((req, res, next) => {
 })
 
 app.get('/', (request, response) => {
+ 
   response.send('<p>Phonebook</p>')
+  
 })
 
-app.get('/info', (request, response) => {
+app.get('/info', (request, response, next) => {
   const d = new Date()
-  
-  response.send(`<h2>Phonebook has info for ${persons.length} people</h2>
+  //console.log(request)
+  //console.log(Person.length)
+  //console.log(Person)
+  Person.find({}).then(persons => {
+    //console.log(persons.length)
+    response.send(`<h2>Phonebook has info for ${persons.length} people</h2>
     <p>${Date(d.setFullYear(d.getFullYear()).toString())}</p>`)
+  }
+)
 })
 
 app.get('/api/persons', (request, response, next) => {
