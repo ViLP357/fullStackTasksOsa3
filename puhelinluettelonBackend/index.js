@@ -48,17 +48,13 @@ app.get('/api/persons', (request, response, next) => {
 
 app.get('/api/persons/:id', (request, response, next) => {
   const id = request.params.id
-
-  //if (!mongoose.Types.ObjectId.isValid(id)) {
-  //  return response.status(400).json({ error: 'Malformatted ID' });
-  //}
   Person.findById(id).then(person => {
     response.json(person)
   })
   .catch(error => next(error))
 })
 
-app.delete("/api/persons/:id", (request, response, next) => { //tänne next kunn middleaweer
+app.delete("/api/persons/:id", (request, response, next) => { 
   const id = request.params.id
   Person.findByIdAndDelete(id)
     .then(person => {
@@ -69,7 +65,6 @@ app.delete("/api/persons/:id", (request, response, next) => { //tänne next kunn
       }
     })
     .catch(error => next(error))
-    
 })
 
 app.post("/api/persons", (request, response, next) => {
@@ -86,6 +81,23 @@ app.post("/api/persons", (request, response, next) => {
     response.json(savedPerson)
   })
   .catch(error => next(error))
+})
+
+app.put("/api/persons/:id", (request, response, next) => {
+  //server kaatui, ei toimi
+  console.log("test")
+  const body = request.body
+  //console.log(body)
+  const person = {
+    name: body.name,
+    number: body.number
+  }
+
+  Person.findByIdAndUpdate(request.params.id, person, {number: request.params.numeber})
+    .then(updatetPerson => {
+      response.json(updatetPerson)
+    })
+    .catch(error => next(error))
 })
 
 const errorHandler = (error, request, response, next) => {
