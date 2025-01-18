@@ -24,10 +24,22 @@ app.use((req, res, next) => {
   }
 })
 
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  } else if (error.name === "ValidationError") {
+    return response.status(400).json({error: error.message})
+  }
+  next(error)
+}
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint'})
+}
+
 app.get('/', (request, response) => {
- 
   response.send('<p>Phonebook</p>')
-  
 })
 
 app.get('/info', (request, response, next) => {
@@ -93,39 +105,36 @@ app.post("/api/persons", (request, response, next) => {
 
 app.put("/api/persons/:id", (request, response, next) => {
   //server kaatui, ei toimi
-  console.log("test")
-  const body = request.body
+  //console.log("test")
+  const {name, number} = request.body
   //console.log(body)
-  const person = {
-    name: body.name,
-    number: body.number
-  }
+  //const person = {
+  //  name: body.name,
+  //  number: body.number
+  //}
 
-  Person.findByIdAndUpdate(request.params.id, person, {number: request.params.numeber})
+  Person.findByIdAndUpdate(request.params.id,
+    {name, number},
+    {number: request.params.numeber, runValidators: true, context: 'query'}
+  )
     .then(updatetPerson => {
       response.json(updatetPerson)
     })
     .catch(error => next(error))
 })
 
-const errorHandler = (error, request, response, next) => {
-  console.error(error.message)
-  if (error.name === 'CastError') {
-    return response.status(400).send({ error: 'malformatted id' })
-  }
-  next(error)
-}
-
 app.use((req, res, next) => {
   console.log(req.body);
   next();
 })
-
+app.use(unknownEndpoint)
 app.use(errorHandler)
-
 //const PORT = process.env.PORT
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
 //3.8 puhelinluettelon backend step8
+
+
+///henkilö epä validi lisätään näkymään mutta ei databaseen !!!onglem

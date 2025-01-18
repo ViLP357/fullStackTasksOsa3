@@ -79,12 +79,12 @@ const App = () => {
       
 
     } else {
-        setPersons(persons.concat(personObject))
-
-      
+        //
+   
         personService
         .create(personObject)
         .then(returnedPerson => {
+          //setPersons(persons.concat(personObject))
           setPersons(persons.concat(returnedPerson))
           setNewName('')
           setNewNumber('')
@@ -94,8 +94,10 @@ const App = () => {
           }, 3000)
         })
         .catch(error => {
-          console.error('Error adding person:', error)
-          alert('Error while adding person.')
+          setErrorMessage(` ${error.response.data.error}`)
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 3000)
         })
     }
   }
@@ -131,5 +133,5 @@ const App = () => {
 }
 
 export default App;
-//puhelinluettelo 2.17 step12
+//puhelinluettelo 3.19 step7
 //Refaktoroitu
