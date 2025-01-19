@@ -71,6 +71,7 @@ const App = () => {
       })
       .catch(error => {
         //alert(`the person was already deleted from server`)
+        console.log(error.response.data.error)
         setErrorMessage("the person has already been deleted from server")
         setTimeout(() => {
           setErrorMessage(null)
@@ -80,20 +81,22 @@ const App = () => {
 
     } else {
         //
+        setNewName('')
+        setNewNumber('')
    
         personService
         .create(personObject)
         .then(returnedPerson => {
           //setPersons(persons.concat(personObject))
           setPersons(persons.concat(returnedPerson))
-          setNewName('')
-          setNewNumber('')
+
           setInfoMessage(`${returnedPerson.name} lisatty`)
           setTimeout(() => {
             setInfoMessage(null)
           }, 3000)
         })
         .catch(error => {
+
           setErrorMessage(` ${error.response.data.error}`)
           setTimeout(() => {
             setErrorMessage(null)
@@ -132,6 +135,5 @@ const App = () => {
   )
 }
 
-export default App;
+export default App
 //puhelinluettelo 3.19 step7
-//Refaktoroitu
