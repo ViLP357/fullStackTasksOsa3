@@ -15,14 +15,15 @@ morgan.token('content',  (req) => {
   return JSON.stringify(req.body)
 })
 
-app.use((req, res, next) => {
-  if (req.method === 'POST') {
-    morgan(':method :url :status :res[content-length] - :response-time ms :content')(req, res, next)
+const requestLogger = (request, response, next) => {
+  if (request.method === 'POST') {
+    morgan(':method :url :status :res[content-length] - :response-time ms :content')(request, response, next)
     //qualified = false
   } else {
-    morgan(':method :url :status :res[content-length] - :response-time ms')(req, res, next)
+    morgan(':method :url :status :res[content-length] - :response-time ms')(request, response, next)
   }
-})
+}
+app.use(requestLogger)
 
 const errorHandler = (error, request, response, next) => {
   console.error(error.message)
