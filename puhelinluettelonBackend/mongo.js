@@ -1,3 +1,5 @@
+//on ehkä turha
+
 const mongoose = require('mongoose')
 
 if (process.argv.length<3) {
